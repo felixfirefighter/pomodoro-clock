@@ -1,0 +1,22 @@
+#body{
+    width: 100%;
+    height: 100%;
+}
+
+.title{
+    font-size: 128px;
+    font-family: 'Covered By Your Grace', cursive;
+    height: 200px;
+    width: 250px;
+    min-height: 200px;
+    line-height: 200px;
+}
+
+.margin-top{
+    margin-top: 20px;
+}
+
+.clock {
+    display: inline-block;
+    width: auto;
+}
