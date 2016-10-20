@@ -6,12 +6,19 @@ $(document).ready(function () {
     var startButton = $("#btn-start");
     var resetButton = $("#btn-reset");
 
-    var isStop = true;
+    var isSessionStop = true;
+    var isBreakStop = true;
 
-    var time = 1500;
+    //user choice of break time, used to reset
+    var sessionTimeSet = 5;
+    var breakTimeSet = 5;
+
+    var sessionTime = 5;
+    var breakTime = 5;
+
     var becomeReset = false;
 
-    var sessionClock = $('.session-clock').FlipClock(time, {
+    var sessionClock = $('.session-clock').FlipClock(sessionTime, {
         clockFace: 'MinuteCounter',
 
         countdown: true,
@@ -19,12 +26,24 @@ $(document).ready(function () {
 
         callbacks: {
             interval: function () {
-                time = sessionClock.getTime().time;
+                sessionTime = sessionClock.getTime().time;
+                if (sessionTime == 0) {
+                    //set time again to offset the one second difference
+                    breakClock.setTime(breakTimeSet+1);
+                    breakClock.start();
+                    isBreakStop = false;
+
+                    isSessionStop = true;
+                }else if(breakTime == 0 && isBreakStop){
+
+                    //set time for display
+                    breakClock.setTime(breakTimeSet);
+                }
             }
         }
     });
 
-    var breakClock = $('.break-clock').FlipClock(time, {
+    var breakClock = $('.break-clock').FlipClock(breakTime, {
         clockFace: 'MinuteCounter',
 
         countdown: true,
@@ -32,27 +51,42 @@ $(document).ready(function () {
 
         callbacks: {
             interval: function () {
-                time = breakClock.getTime().time;
+                breakTime = breakClock.getTime().time;
+
+                if (breakTime == 0) {
+
+                    //set time again to offset the one second difference
+                    sessionClock.setTime(sessionTimeSet+1);
+                    sessionClock.start();
+                    isSessionStop= false;
+
+                    isBreakStop = true;
+                }else if(sessionTime == 0 && isSessionStop){
+
+                    //set time for display
+                    sessionClock.setTime(sessionTimeSet);
+                }
             }
         }
     });
 
     startButton.click(function () {
-        if (isStop) {
+        if (isSessionStop) {
             sessionClock.start();
             startButton.text("Stop");
 
-            isStop = false;
+            isSessionStop = false;
         } else {
             sessionClock.stop();
             startButton.text("Start");
 
-            isStop = true;
+            isSessionStop = true;
         }
     });
 
     resetButton.click(function () {
         //stop the countdown when reset is clicked
     });
-
 });
+
+
