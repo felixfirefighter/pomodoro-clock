@@ -69,12 +69,12 @@ html, body {
 }
 
 .btn-main {
-    width: 300px;
-    font-size: 48px;
+    width: 225px;
+    font-size: 36px;
     color: white;
     background: #F44336;
     font-family: 'Covered By Your Grace', cursive;
-    margin: 10px 40px;
+    margin: 10px 0;
 }
 
 .btn-main:hover {
@@ -93,4 +93,10 @@ html, body {
 .btn-edit:focus{
     color:white;
     outline: none;
+}
+
+p, a{
+    font-size: 32px;
+    color: #F44336;
+    font-family: 'Covered By Your Grace', cursive;
 }

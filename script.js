@@ -5,6 +5,12 @@
 $(document).ready(function () {
     var startButton = $("#btn-start");
     var resetButton = $("#btn-reset");
+    var stopMusicButton = $("#btn-stop-music");
+    stopMusicButton.prop('disabled',true);
+
+    //use this to resume session or break when user
+    //stop then resume(start) the clock
+    var sessionWasRunning = true;
 
     var isSessionStop = true;
     var isBreakStop = true;
@@ -13,8 +19,23 @@ $(document).ready(function () {
     var resetBreak = 300;
 
     //user choice of session and break time
+
     var sessionTime = 1500;
     var breakTime = 300;
+
+    var sessionOverMusic = new Howl({
+        src: ['music/bensound-cute.mp3'],
+        onend: function () {
+            stopMusicButton.prop('disabled',true);
+        }
+    });
+
+    var breakOverMusic = new Howl({
+        src: ['music/bensound-anewbeginning.mp3'],
+        onend: function () {
+            stopMusicButton.disabled = true;
+        }
+    });
 
     var sessionClock = $('.session-clock').FlipClock(sessionTime, {
         clockFace: 'MinuteCounter',
@@ -24,7 +45,7 @@ $(document).ready(function () {
 
         callbacks: {
             interval: function () {
-                sessionTime = sessionClock.getTime().time;
+                var sessionTime = sessionClock.getTime().time;
                 if (sessionTime == 0) {
                     //set time again to offset the one second difference
                     breakClock.setTime(breakTime + 1);
@@ -32,6 +53,10 @@ $(document).ready(function () {
                     isBreakStop = false;
 
                     isSessionStop = true;
+                    sessionWasRunning = false;
+
+                    playSessionOverMusic();
+
                 } else if (breakTime == 0 && isBreakStop) {
 
                     //set time for display
@@ -49,7 +74,7 @@ $(document).ready(function () {
 
         callbacks: {
             interval: function () {
-                breakTime = breakClock.getTime().time;
+                var breakTime = breakClock.getTime().time;
 
                 if (breakTime == 0) {
 
@@ -57,8 +82,12 @@ $(document).ready(function () {
                     sessionClock.setTime(sessionTime + 1);
                     sessionClock.start();
                     isSessionStop = false;
+                    sessionWasRunning = true;
 
                     isBreakStop = true;
+
+                    playBreakOverMusic();
+
                 } else if (sessionTime == 0 && isSessionStop) {
 
                     //set time for display
@@ -67,6 +96,8 @@ $(document).ready(function () {
             }
         }
     });
+
+    /* Edit Time Section */
 
     $("#btn-reduce-session-minute").click(function () {
         changeSessionTime(-60);
@@ -77,11 +108,11 @@ $(document).ready(function () {
     });
 
     $("#btn-reduce-session-second").click(function () {
-        changeSessionTime(-10);
+        changeSessionTime(-1);
     });
 
     $("#btn-increase-session-second").click(function () {
-        changeSessionTime(10);
+        changeSessionTime(1);
     });
 
     function changeSessionTime(time) {
@@ -101,11 +132,11 @@ $(document).ready(function () {
     });
 
     $("#btn-reduce-break-second").click(function () {
-        changeBreakTime(-10);
+        changeBreakTime(-1);
     });
 
     $("#btn-increase-break-second").click(function () {
-        changeBreakTime(10);
+        changeBreakTime(1);
     });
 
     function changeBreakTime(time) {
@@ -116,19 +147,35 @@ $(document).ready(function () {
         }
     }
 
+    /* End Edit Time Section */
 
     startButton.click(function () {
-        if (isSessionStop) {
+        if (sessionWasRunning && isSessionStop) {
             sessionClock.start();
             startButton.text("Stop");
 
             isSessionStop = false;
-        } else {
+        } else if (!sessionWasRunning && isBreakStop) {
+            breakClock.start();
+            startButton.text("Stop");
+
+            isBreakStop = false;
+        }else if(!isSessionStop){
             sessionClock.stop();
             startButton.text("Start");
 
             isSessionStop = true;
+            sessionWasRunning = true;
+        }else if(!isBreakStop){
+            breakClock.stop();
+            startButton.text("Start");
+
+            isBreakStop = true;
+            sessionWasRunning = false;
+        }else{
+
         }
+
     });
 
     resetButton.click(function () {
@@ -143,7 +190,14 @@ $(document).ready(function () {
         breakClock.setTime(breakTime);
     });
 
-    function stopAllClocks(){
+    stopMusicButton.click(function () {
+        sessionOverMusic.stop();
+        breakOverMusic.stop();
+
+        $(this).prop("disabled",true);
+    });
+
+    function stopAllClocks() {
         sessionClock.stop();
         isSessionStop = true;
 
@@ -152,6 +206,25 @@ $(document).ready(function () {
 
         startButton.text("Start");
     }
+
+    function playSessionOverMusic() {
+        stopMusicButton.prop('disabled',false);
+
+        if (isSessionStop) {
+            breakOverMusic.stop();
+            sessionOverMusic.play();
+        }
+    }
+
+    function playBreakOverMusic() {
+        stopMusicButton.prop('disabled',false);
+
+        if (isBreakStop) {
+            sessionOverMusic.stop();
+            breakOverMusic.play();
+        }
+    }
+
 
 });
 
