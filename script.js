@@ -24,6 +24,7 @@ $(document).ready(function () {
     var breakTime = 300;
 
     var sessionOverMusic = new Howl({
+        //edit this to the music you want to play
         src: ['music/bensound-cute.mp3'],
         onend: function () {
             stopMusicButton.prop('disabled',true);
@@ -31,6 +32,7 @@ $(document).ready(function () {
     });
 
     var breakOverMusic = new Howl({
+        //edit this to the music you want to play
         src: ['music/bensound-anewbeginning.mp3'],
         onend: function () {
             stopMusicButton.disabled = true;
