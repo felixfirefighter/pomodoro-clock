@@ -85,3 +85,12 @@ html, body {
     color: white;
     outline: none;
 }
+
+.btn-edit:hover{
+    color: white;
+}
+
+.btn-edit:focus{
+    color:white;
+    outline: none;
+}
